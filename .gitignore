@@ -1,0 +1,16 @@
+# Environment (secrets)
+.env
+
+# Binaries
+native-client/native-client
+native-client/cli-client
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/

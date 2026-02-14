@@ -1,0 +1,38 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build CLI",
+      "type": "shell",
+      "command": "go",
+      "args": ["build", "-o", "native-client", "."],
+      "options": {
+        "cwd": "${workspaceFolder}/native-client",
+        "env": {}
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Build CLI (verbose)",
+      "type": "shell",
+      "command": "go",
+      "args": ["build", "-v", "-o", "native-client", "."],
+      "options": {
+        "cwd": "${workspaceFolder}/native-client",
+        "env": {}
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    }
+  ]
+}

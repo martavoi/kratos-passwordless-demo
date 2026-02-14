@@ -1,0 +1,134 @@
+version: v1.3.0
+
+dsn: memory
+
+serve:
+  public:
+    base_url: http://127.0.0.1:4433/
+    cors:
+      enabled: true
+  admin:
+    base_url: http://kratos:4434/
+
+selfservice:
+  default_browser_return_url: http://127.0.0.1:4455/welcome
+  allowed_return_urls:
+    - http://127.0.0.1:4455
+    - http://localhost:4455
+
+  methods:
+    password:
+      enabled: false
+    code:
+      enabled: true
+      passwordless_enabled: true
+
+  flows:
+    error:
+      ui_url: http://127.0.0.1:4455/error
+
+    settings:
+      ui_url: http://127.0.0.1:4455/settings
+      privileged_session_max_age: 15m
+      required_aal: highest_available
+
+    recovery:
+      enabled: true
+      ui_url: http://127.0.0.1:4455/recovery
+      use: code
+
+    verification:
+      enabled: true
+      ui_url: http://127.0.0.1:4455/verification
+      use: code
+      after:
+        default_browser_return_url: http://127.0.0.1:4455/welcome
+
+    logout:
+      after:
+        default_browser_return_url: http://127.0.0.1:4455/login
+
+    login:
+      ui_url: http://127.0.0.1:4455/login
+      lifespan: 10m
+
+    registration:
+      lifespan: 10m
+      ui_url: http://127.0.0.1:4455/registration
+      after:
+        code:
+          hooks:
+            - hook: session
+
+log:
+  level: debug
+  format: text
+  leak_sensitive_values: true
+
+secrets:
+  cookie:
+    - PLEASE-CHANGE-ME-I-AM-VERY-INSECURE
+  cipher:
+    - 32-LONG-SECRET-NOT-SECURE-AT-ALL
+
+ciphers:
+  algorithm: xchacha20-poly1305
+
+hashers:
+  algorithm: bcrypt
+  bcrypt:
+    cost: 8
+
+identity:
+  default_schema_id: phone_sms
+  schemas:
+    - id: phone_sms
+      url: file:///etc/config/kratos/identity.phone-sms.schema.json
+
+courier:
+  channels:
+    - id: sms
+      type: http
+      request_config:
+        url: https://webhook.site/3b1c3128-628e-456f-88d8-fb6ddad79ec8
+        method: POST
+        body: base64://ZnVuY3Rpb24oY3R4KSB7CiAgdG86IGN0eC5yZWNpcGllbnQsCiAgYm9keTogY3R4LmJvZHkKfQ==
+        headers:
+          Content-Type: application/json
+  templates:
+    login_code:
+      valid:
+        email:
+          body:
+            html: base64://PGh0bWw+PGJvZHk+Q29kZToge3sgLkxvZ2luQ29kZSB9fTwvYm9keT48L2h0bWw+
+            plaintext: base64://Q29kZToge3sgLkxvZ2luQ29kZSB9fQ==
+        sms:
+          body:
+            plaintext: base64://WW91ciBsb2dpbiBjb2RlIGlzOiB7eyAuTG9naW5Db2RlIH19
+    verification_code:
+      valid:
+        email:
+          body:
+            html: base64://PGh0bWw+PGJvZHk+Q29kZToge3sgLlZlcmlmaWNhdGlvbkNvZGUgfX08L2JvZHk+PC9odG1sPg==
+            plaintext: base64://Q29kZToge3sgLlZlcmlmaWNhdGlvbkNvZGUgfX0=
+        sms:
+          body:
+            plaintext: base64://WW91ciB2ZXJpZmljYXRpb24gY29kZSBpczoge3sgLlZlcmlmaWNhdGlvbkNvZGUgfX0=
+    recovery_code:
+      valid:
+        email:
+          body:
+            html: base64://PGh0bWw+PGJvZHk+Q29kZToge3sgLlJlY292ZXJ5Q29kZSB9fTwvYm9keT48L2h0bWw+
+            plaintext: base64://Q29kZToge3sgLlJlY292ZXJ5Q29kZSB9fQ==
+        sms:
+          body:
+            plaintext: base64://WW91ciByZWNvdmVyeSBjb2RlIGlzOiB7eyAuUmVjb3ZlcnlDb2RlIH19
+    registration_code:
+      valid:
+        email:
+          body:
+            html: base64://PGh0bWw+PGJvZHk+Q29kZToge3sgLlJlZ2lzdHJhdGlvbkNvZGUgfX08L2JvZHk+PC9odG1sPg==
+            plaintext: base64://Q29kZToge3sgLlJlZ2lzdHJhdGlvbkNvZGUgfX0=
+
+feature_flags:
+  use_continue_with_transitions: true

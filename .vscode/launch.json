@@ -1,0 +1,55 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "CLI: Signup",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/native-client",
+      "cwd": "${workspaceFolder}/native-client",
+      "args": ["--verbose", "signup"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "CLI: Signin",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/native-client",
+      "cwd": "${workspaceFolder}/native-client",
+      "args": ["--verbose", "signin"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "CLI: Whoami",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/native-client",
+      "cwd": "${workspaceFolder}/native-client",
+      "args": ["--verbose", "whoami"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "CLI: Menu",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/native-client",
+      "cwd": "${workspaceFolder}/native-client",
+      "args": ["--verbose"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "CLI: Signup (custom URL)",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/native-client",
+      "cwd": "${workspaceFolder}/native-client",
+      "args": ["--url", "http://127.0.0.1:4433", "--verbose", "signup"],
+      "console": "integratedTerminal"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+version: '3.8'
+
+networks:
+  intranet:
+
+volumes:
+  kratos-pg:
+
+services:
+  kratos-pg:
+    image: postgres:alpine
+    volumes:
+      - kratos-pg:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-kratos}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
+      - POSTGRES_DB=${POSTGRES_DB:-kratos}
+    networks:
+      - intranet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kratos -d kratos"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  kratos-migrate:
+    depends_on:
+      kratos-pg:
+        condition: service_healthy
+    image: oryd/kratos:v25.4.0
+    environment:
+      - DSN=${DSN:-postgres://kratos:secret@kratos-pg:5432/kratos?sslmode=disable&max_conns=20&max_idle_conns=4}
+    volumes:
+      - ./kratos:/etc/config/kratos:ro
+    command: -c /etc/config/kratos/kratos.yml migrate sql -e --yes
+    restart: on-failure
+    networks:
+      - intranet
+
+  kratos:
+    depends_on:
+      kratos-migrate:
+        condition: service_completed_successfully
+    image: oryd/kratos:v25.4.0
+    ports:
+      - "4433:4433"
+      - "4434:4434"
+    restart: unless-stopped
+    environment:
+      - DSN=${DSN:-postgres://kratos:secret@kratos-pg:5432/kratos?sslmode=disable&max_conns=20&max_idle_conns=4}
+      - LOG_LEVEL=debug
+      - COURIER_CHANNELS_0_REQUEST_CONFIG_URL=${SMS_WEBHOOK_URL:-https://webhook.site/placeholder}
+    command: serve -c /etc/config/kratos/kratos.yml --dev --watch-courier
+    volumes:
+      - ./kratos:/etc/config/kratos:ro
+    networks:
+      - intranet
+
+  kratos-selfservice-ui-node:
+    depends_on:
+      - kratos
+    image: oryd/kratos-selfservice-ui-node:v25.4.0
+    ports:
+      - "4455:4455"
+    environment:
+      - PORT=4455
+      - KRATOS_PUBLIC_URL=http://kratos:4433/
+      - KRATOS_BROWSER_URL=http://127.0.0.1:4433/
+      - COOKIE_SECRET=${COOKIE_SECRET:-changeme}
+      - CSRF_COOKIE_NAME=ory_csrf_ui
+      - CSRF_COOKIE_SECRET=${CSRF_COOKIE_SECRET:-changeme}
+    networks:
+      - intranet
+    restart: on-failure
