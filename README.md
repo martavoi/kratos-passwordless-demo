@@ -2,6 +2,8 @@
 
 A demo of [Ory Kratos](https://www.ory.sh/kratos) configured for passwordless authentication using phone + SMS OTP. The project includes a custom native client TUI that demonstrates how the Native Flow API works, along with Docker Compose running Kratos with PostgreSQL and the reference Web UI for browser-based login and signup flows.
 
+**Read more:** [Ory Kratos: Enterprise Identity Management](https://martavoi.by/posts/ory-kratos-identity-management/) — blog post describing the purpose of this demo and Kratos in general (identity vs OAuth, credential types, hooks, native vs browser flows).
+
 ## Prerequisites
 
 - Docker and Docker Compose
